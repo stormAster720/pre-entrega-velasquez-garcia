@@ -15,30 +15,28 @@ const Product_preview = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            setTimeout(async () => {
-                try {
-                    // Look for the collection named "products" on Firestore
-                    const itemCollection = collection(db, 'products');
-                    // Retrieve products from Firestore
-                    const response = await getDocs(itemCollection);
+            try {
+                // Look for the collection named "products" on Firestore
+                const itemCollection = collection(db, 'products');
+                // Retrieve products from Firestore
+                const response = await getDocs(itemCollection);
 
-                    // Read the data from the response and store it into a variable
-                    const retrievedProducts = response.docs.map((prod) => ({
-                        ...prod.data(),
-                    }));
+                // Read the data from the response and store it into a variable
+                const retrievedProducts = response.docs.map((prod) => ({
+                    ...prod.data(),
+                }));
 
-                    // Get the current previewing product from the retrieved products by using the product ID 
-                    const filteredProduct = retrievedProducts.find((prod) => prod.name.toLowerCase() === productId.replace(/-/g, ' '));
+                // Get the current previewing product from the retrieved products by using the product ID 
+                const filteredProduct = retrievedProducts.find((prod) => prod.name.toLowerCase() === productId.replace(/-/g, ' '));
 
-                    if (filteredProduct) {
-                        setProduct(filteredProduct);
-                    }
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    setLoading(false);
+                if (filteredProduct) {
+                    setProduct(filteredProduct);
                 }
-            }, 1000);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchProducts();

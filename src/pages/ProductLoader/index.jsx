@@ -18,39 +18,42 @@ const ProductLoader = () => {
   const fetchProducts = async () => {
     const itemCollection = collection(db, 'products');
 
-    // Retrieve products from Firestore
-    const response = await getDocs(itemCollection);
-    const retrievedProducts = response.docs.map((prod) => ({
-      id: prod.id,
-      ...prod.data(),
-    }));
-    
+    try {
+      // Retrieve products from Firestore
+      const response = await getDocs(itemCollection);
+      const retrievedProducts = response.docs.map((prod) => ({
+        id: prod.id,
+        ...prod.data(),
+      }));
 
-    setTimeout(() => {
-       // Set retrieved products to the array
-    setStoreProducts(retrievedProducts);
-    const filteredProducts = id === undefined ? retrievedProducts : retrievedProducts.filter((prod) => prod.category === id);
+      // Set retrieved products to the array
+      setStoreProducts(retrievedProducts);
 
-    // Set the filtered products from a category
-    setProducts(filteredProducts);
-    }, 1000);
-   
+      const filteredProducts = id === undefined ? retrievedProducts : retrievedProducts.filter((prod) => prod.category === id);
+
+      // Set the filtered products from a category
+      setProducts(filteredProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-          // Set the filtered products from a category
-    setProducts([]);
+        // Set the filtered products from a category to an empty array
+        setProducts([]);
         await fetchProducts();
-     
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        // Close the loading alert
+        Swal.close();
       }
     };
-  
+
     fetchData();
-  
+
     // Show loading alert
     Swal.fire({
       title: 'Please wait',
